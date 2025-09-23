@@ -44,8 +44,7 @@ export const signupController = async (req, res) => {
         }).save();
 
         const { password: pass, ...rest } = newUser._doc;
-        generateTokenAndSetCookie(newUser._id, res);
-        res.status(201).json({
+        generateTokenAndSetCookie(newUser._id, res).status(201).json({
             success: true,
             message: 'User registered successfully',
             user: rest,
@@ -83,8 +82,7 @@ export const signinController = async (req, res) => {
             google_auth: user.google_auth,
             blogs: user.blogs,
         };
-        generateTokenAndSetCookie(user._id, res);
-        res.status(200).json({
+        generateTokenAndSetCookie(user._id, res).status(200).json({
             success: true,
             message: 'User signed in successfully.',
             user: userResponse,
@@ -92,5 +90,21 @@ export const signinController = async (req, res) => {
     } catch (error) {
         console.log('Error in signinController:', error);
         res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+    }
+};
+
+export const signoutController = (req, res) => {
+    try {
+        res.clearCookie('token');
+        res.status(200).json({
+            success: true,
+            message: 'User logged out successfully',
+        });
+    } catch (error) {
+        console.log('Error in signoutController', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error in signoutController',
+        });
     }
 };

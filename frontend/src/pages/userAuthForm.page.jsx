@@ -2,12 +2,25 @@ import googleIcon from '../imgs/google.png';
 import { Link } from 'react-router-dom';
 import AnimationWrapper from '../common/page-animation';
 import AuthForm from '../components/auth-form.component';
+import { useMemo } from 'react';
+
+const NavigateSection = ({ text, link }) => {
+    return (
+        <p className='mt-6 text-xl text-center text-dark-grey'>
+            {text}
+            <Link to={link} className='ml-1 text-xl text-black underline'>
+                {link === '/signin' ? 'Sign In Here' : 'Sign Up'}
+            </Link>
+        </p>
+    );
+};
 
 export default function UserAuthForm({ type }) {
-    const subText =
-        type === 'sign-in'
+    const subText = useMemo(() => {
+        return type === 'sign-in'
             ? 'Sign in to access your personalized dashboard, connect with the community, and continue your blogging journey.'
             : 'Create your free account to share your stories, connect with readers, and become part of our vibrant blogging community.';
+    }, [type]);
 
     return (
         <AnimationWrapper keyValue={type}>
@@ -25,24 +38,16 @@ export default function UserAuthForm({ type }) {
                         OR
                         <hr className='w-1/2 border-black' />
                     </div>
+
                     <button className='flex items-center justify-center btn-dark gap-4 w-[90%] center'>
                         <img src={googleIcon} alt='logo-google' className='w-5' />
                         continue with Google
                     </button>
+
                     {type === 'sign-in' ? (
-                        <p className='mt-6 text-xl text-center text-dark-grey'>
-                            Don't have an account?{' '}
-                            <Link to='/signup' className='ml-1 text-xl text-black underline'>
-                                Sign Up
-                            </Link>
-                        </p>
+                        <NavigateSection text="Don't have an account?" link='/signup' />
                     ) : (
-                        <p className='mt-6 text-xl text-center text-dark-grey'>
-                            Already a member?{' '}
-                            <Link to='/signin' className='ml-1 text-xl text-black underline'>
-                                Sign In Here
-                            </Link>
-                        </p>
+                        <NavigateSection text='Already a member?' link='/signin' />
                     )}
                 </div>
             </section>

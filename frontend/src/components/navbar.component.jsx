@@ -1,9 +1,30 @@
 import { Link, Outlet } from 'react-router-dom';
 import logo from '../imgs/logo.png';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import useAuthStore from '../store/authStore';
+import UserNavigation from './user-navigation.component';
 
 export default function Navbar() {
     const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
+    const { user } = useAuthStore((state) => state);
+    const [openUserNav, setOpenUserNav] = useState(false);
+    const userNavRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!userNavRef.current || userNavRef.current.contains(event.target)) {
+                return;
+            }
+            setOpenUserNav(false);
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('touchstart', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+        };
+    }, [setOpenUserNav]);
 
     return (
         <>
@@ -41,12 +62,40 @@ export default function Navbar() {
                         <i className='fi fi-rr-file-edit' />
                         <span>Write</span>
                     </Link>
-                    <Link to='signin' className='py-2 btn-dark'>
-                        Sign in
-                    </Link>
-                    <Link to='signup' className='hidden py-2 btn-light md:block'>
-                        Sign up
-                    </Link>
+                    {user ? (
+                        <>
+                            <Link to='/dashboard/notification'>
+                                <button className='relative w-12 h-12 rounded-full bg-grey hover:bg-black/10'>
+                                    <i className='block mt-1 text-2xl fi fi-rr-bell' />
+                                </button>
+                            </Link>
+                            <div
+                                ref={userNavRef}
+                                className='relative'
+                                onClick={() => setOpenUserNav((prev) => !prev)}
+                            >
+                                <button className='w-12 h-12 mt-1'>
+                                    <img
+                                        src={user.personal_info.profile_img}
+                                        alt='Avatar_User'
+                                        className='object-cover w-full h-full rounded-full'
+                                    />
+                                </button>
+                                {openUserNav && (
+                                    <UserNavigation username={user.personal_info.username} />
+                                )}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <Link to='signin' className='py-2 btn-dark'>
+                                Sign in
+                            </Link>
+                            <Link to='signup' className='hidden py-2 btn-light md:block'>
+                                Sign up
+                            </Link>
+                        </>
+                    )}
                 </div>
             </nav>
 

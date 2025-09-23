@@ -22,7 +22,8 @@ export default function AuthForm({ type }) {
             setLoading(true);
             const res = await axios.post(
                 `${import.meta.env.VITE_SERVER_API_URL}/api/auth/${serverRoute}`,
-                formData
+                formData,
+                { withCredentials: true }
             );
             if (res.data?.success) {
                 setUser(res.data.user);

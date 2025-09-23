@@ -1,12 +1,14 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import setupRoutes from './Routes/index.js';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import setupRoutes from './Routes/index.js';
 import connectDatabase from './Database/connect_database.js';
 
+dotenv.config();
 const app = express();
 app.use(express.json());
-dotenv.config();
+app.use(cookieParser());
 app.use(
     cors({
         origin: process.env.CLIENT_URL,
